@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>浮動五角星效果</title>
+
+    <style>
+      /* 確保 html 和 body 的預設樣式被清除 */
+      html, body {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font-family: Arial, sans-serif;
+        overflow: hidden; /* 防止滾動條出現 */
+        background: #cdb4db; /* 設定背景顏色為 #cdb4db */
+      }
+
+      canvas {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1; /* 將動畫放在 iframe 的下一層 */
+      }
+
+      ul {
+        list-style-type: none;
+        margin: 0; /* 確保 ul 沒有外邊距 */
+        padding: 10px; /* 增加內部間距 */
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        display: flex; /* 將選單改為橫向排列 */
+        gap: 0; /* 移除間距，改用邊框分隔 */
+        border: 2px solid #9e0059; /* 新增方框線 */
+        border-radius: 5px; /* 方框圓角 */
+        background-color: #ffe5ec; /* 背景顏色 */
+        z-index: 3; /* 將選單放在最上層 */
+      }
+
+      li {
+        margin: 0;
+        position: relative; /* 為子選單定位 */
+        border-left: 2px solid #9e0059; /* 每個選項左側的框線 */
+      }
+
+      li:first-child {
+        border-left: none; /* 移除第一個選項的左側框線 */
+      }
+
+      a {
+        text-decoration: none;
+        font-size: 18px;
+        color: #9e0059;
+        padding: 0 10px; /* 增加內部間距 */
+        display: block; /* 讓整個區域可點擊 */
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      /* 子選單樣式 */
+      li ul {
+        display: none; /* 預設隱藏子選單 */
+        position: absolute;
+        top: 100%; /* 子選單顯示在主選單下方 */
+        left: 0;
+        background-color: #ffe5ec;
+        border: 2px solid #9e0059; /* 子選單的外框線 */
+        border-radius: 5px;
+        padding: 0; /* 移除內部的多餘間距 */
+        list-style-type: none;
+        width: max-content; /* 根據內容自動調整寬度 */
+        white-space: nowrap; /* 防止文字換行 */
+        box-sizing: border-box; /* 確保 padding 不會影響寬度計算 */
+      }
+
+      li:hover ul {
+        display: block; /* 滑鼠移至主選單時顯示子選單 */
+      }
+
+      li ul li {
+        margin: 0; /* 移除多餘的間距 */
+        border-top: 1px solid #9e0059; /* 每個選項上方的框線 */
+        border-bottom: none; /* 確保沒有多餘的底部框線 */
+      }
+
+      li ul li:first-child {
+        border-top: none; /* 移除第一個選項的上方框線 */
+      }
+
+      li ul li a {
+        display: block; /* 讓整個選項區域可點擊 */
+        padding: 10px 15px; /* 增加內部間距 */
+        text-align: left; /* 確保文字靠左對齊 */
+        border: none; /* 確保選項內部沒有多餘的框線 */
+      }
+
+      .iframe-container {
+        position: absolute;
+        top: 50%; /* 垂直置中 */
+        left: 50%; /* 水平置中 */
+        transform: translate(-50%, -50%); /* 將元素移動到正中心 */
+        width: 80%; /* 設定寬度為視窗的 80% */
+        height: 80%; /* 設定高度為視窗的 80% */
+        z-index: 2; /* 將 iframe 放在第二層 */
+      }
+
+      iframe {
+        width: 100%; /* 填滿容器寬度 */
+        height: 100%; /* 填滿容器高度 */
+        border: none; /* 移除邊框 */
+        background: rgba(255, 255, 255, 0.2); /* 設定背景透明度為 0.2 */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 增加陰影效果 */
+      }
+
+      .intro-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 30px;
+        color: #13315c;
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        display: none; /* 初始隱藏 */
+        z-index: 4;
+      }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js"></script>
+  </head>
+
+  <body>
+    <ul>
+      <li>
+        <a href="#" onclick="showIntro()">自我介紹</a>
+      </li>
+      <li>
+        <a href="#portfolio">作品集</a>
+        <ul>
+          <li><a href="#" onclick="loadIframe('https://hackmd.io/@Vanchieh/ryQvuPBqJg')">第一周</a></li>
+          <li><a href="#" onclick="loadIframe('https://hackmd.io/@Vanchieh/BJ3Oc6woyx')">第二周</a></li>
+          <li><a href="#" onclick="loadIframe('https://vanchieh.github.io/20250328/')">第三周</a></li>
+          <li><a href="#" onclick="loadIframe('https://https://vanchieh.github.io/20250411/')">第四周</a></li>
+        </ul>
+      </li>
+      <li><a href="#quiz">測驗卷</a></li>
+      <li>
+        <a href="#" onclick="loadIframe('https://cfchen58.synology.me/%E7%A8%8B%E5%BC%8F%E8%A8%AD%E8%A8%882024/A2/week1/20250221_092037.mp4')">教學影片</a>
+      </li>
+    </ul>
+
+    <div class="iframe-container">
+      <iframe id="content-frame" src=""></iframe>
+    </div>
+
+    <div class="intro-text" id="intro-text">
+      淡江大學教育科技學系，姓名:徐凡傑，興趣:追星、聽音樂，射手座ENFP
+    </div>
+
+    <script>
+      const colors = ['#ffe5ec', '#ffc2d1', '#ffb3c6', '#ff8fab', '#fb6f92'];
+      const stars = [];
+      const numStars = 50;
+
+      function setup() {
+        createCanvas(windowWidth, windowHeight);
+        for (let i = 0; i < numStars; i++) {
+          const size = random(20, 120);
+          const x = random(width);
+          const y = random(height);
+          const color = random(colors);
+          const speedX = random(-2, 2);
+          const speedY = random(-2, 2);
+          stars.push({ x, y, size, color, speedX, speedY });
+        }
+      }
+
+      function draw() {
+        background('#cdb4db');
+        for (const star of stars) {
+          // 更新位置
+          star.x += star.speedX;
+          star.y += star.speedY;
+
+          // 邊界檢查，讓星星反彈
+          if (star.x < 0 || star.x > width) star.speedX *= -1;
+          if (star.y < 0 || star.y > height) star.speedY *= -1;
+
+          // 繪製五角星
+          drawStar(star.x, star.y, star.size / 2, star.size, 5, star.color);
+        }
+      }
+
+      function drawStar(x, y, radius1, radius2, npoints, color) {
+        let angle = TWO_PI / npoints;
+        let halfAngle = angle / 2.0;
+        fill(color);
+        noStroke();
+        beginShape();
+        for (let a = 0; a < TWO_PI; a += angle) {
+          let sx = x + cos(a) * radius2;
+          let sy = y + sin(a) * radius2;
+          vertex(sx, sy);
+          sx = x + cos(a + halfAngle) * radius1;
+          sy = y + sin(a + halfAngle) * radius1;
+          vertex(sx, sy);
+        }
+        endShape(CLOSE);
+      }
+
+      function windowResized() {
+        resizeCanvas(windowWidth, windowHeight);
+      }
+
+      function loadIframe(url) {
+        const iframe = document.getElementById('content-frame');
+        iframe.src = url;
+
+        // 隱藏自我介紹文字
+        const introText = document.getElementById('intro-text');
+        introText.style.display = 'none';
+      }
+
+      function showIntro() {
+        // 顯示自我介紹文字
+        const introText = document.getElementById('intro-text');
+        introText.style.display = 'block';
+
+        // 清空 iframe
+        const iframe = document.getElementById('content-frame');
+        iframe.src = '';
+      }
+    </script>
+  </body>
+</html>

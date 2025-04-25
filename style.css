@@ -1,0 +1,22 @@
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+canvas {
+  display: block;
+  canvas {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1; /* 確保 canvas 在 iframe 下方 */
+  }
+  iframe {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2; /* 確保 iframe 在 canvas 上方 */
+  }  
+}
